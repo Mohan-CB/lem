@@ -1,0 +1,17 @@
+{
+  "name": "lem",
+  "version": "1.0.0",
+  "description": "lazy enpoint monitor",
+  "main": "src/index.ts",
+  "author": "Mohan Liu <Mohan.Liu@careerbuilder.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@types/redis": "^2.8.13",
+    "redis": "^2.8.0"
+  },
+  "devDependencies": {
+    "express": "^4.17.1",
+    "koa": "^2.8.1",
+    "koa-router": "^7.4.0"
+  }
+}
