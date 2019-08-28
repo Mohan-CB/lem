@@ -3,30 +3,60 @@ Service A sends requests to Service B.
 
 In this case, I own B and I don't own A, how can I ensure the connection is alive?
 
-I monitor the last activity for Service B, if the last activity was 6 hours, then it attracts my attention.
+By monitoring the last activity of some route on Service B, if the last activity was 6 hours ago, then it attracts my attention.
 
 # Examples 
 
 ## initialize
-`let lemInstance = require('lem')`
+`const lem = require('lem')`
 
-## pass redis information
-`lemInstance('redisConnectionInfo', routeRegisterationOption) || lemInstance(redisClient, routeRegisterationOption)`
+```
+lemInstance = new lem.lem();
+```
+
+```
+lemInstance = new lem.lem(
+  null, 
+  {
+    include: {
+      '/add': 10,
+      '/minus': 10
+    },
+    exclude: [
+      '/multiply',
+      '/divide'
+    ]
+  },
+  console.log);
+```
+
+```
+<!-- in express/koa -->
+app.use(lemInstance.register());
+```
 
 ## router registeration options
-by default, lemInstance monitor all routes for 6 hours by `lemInstance(redisConnectionInfo)`
+by default, lemInstance monitor all routes for 6 hours by 
+
 well, you can also try to pass a dedicated route monitor configuration file to control it
 ```json
 {
-  {
-    'router1' : 3600000 // 1h
-  },
-  {
-    'router2/subRoute1' : 86400000 // 1d
-  },
-  {
-    'router3/subRoute/2' : 21600000 //6h
-  }
+  include: [
+      {
+        '/route1' : 60
+      },
+      {
+        '/route2/subRoute1' : 3600
+      },
+      {
+        '/route3/subRoute2' : 10
+      }
+  ],
+  exclude: [
+      '/route1',
+      '/route2',
+      '/route3',
+  ]
 }
 ```
-and monitor is setup to check the router1 for 1h, router2/subRoute1 for 1d and router3/subRoute/2 for 6h respectively
+and monitor is setup to check the `/route1` for 1min, `/route2/subRoute1` for 1h
