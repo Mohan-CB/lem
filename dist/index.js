@@ -45,31 +45,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var redis = __importStar(require("redis"));
 var util_1 = require("util");
 var lem = /** @class */ (function () {
-    function lem(redisConnectConfig, config) {
+    function lem(redisConnectConfig, config, cb) {
         var _this = this;
-        if (util_1.isUndefined(redisConnectConfig)) {
-            console.log('ckpt1');
+        if (util_1.isNullOrUndefined(redisConnectConfig)) {
             this.rConPub = redis.createClient();
             this.rConSub = redis.createClient();
         }
         else if (typeof redisConnectConfig == 'string') {
-            console.log('ckpt2');
             this.rConPub = redis.createClient(redisConnectConfig);
             this.rConSub = redis.createClient(redisConnectConfig);
         }
         else {
-            console.log('ckpt3');
+            // TODO: fix creation for pub/sub client
             this.rConPub = redisConnectConfig;
             this.rConSub = redisConnectConfig;
         }
-        // make sure the redis connection is actually alive
         this.rConPub.ping(function (err, reply) {
             if (err !== null) {
                 console.log('Redis initialization error', "" + JSON.stringify(err));
                 process.exit(1);
-            }
-            else {
-                console.log('Redis initialization success', "" + reply);
             }
         });
         this.rConSub.on("ready", function () {
@@ -77,8 +71,10 @@ var lem = /** @class */ (function () {
             _this.rConSub.SUBSCRIBE("__keyevent@0__:expired");
             _this.rConSub.on("message", function (channel, message) { return __awaiter(_this, void 0, void 0, function () {
                 return __generator(this, function (_a) {
-                    // TODO:
-                    console.log(channel + ", " + message);
+                    if (!cb)
+                        throw new Error("route " + message + " has no activity for 5 secs");
+                    else
+                        cb("route " + message + " has no activity for 5 secs");
                     return [2 /*return*/];
                 });
             }); });
@@ -87,20 +83,30 @@ var lem = /** @class */ (function () {
         this.routeConfig = config;
         console.log('lem is at your service, sir');
     }
-    lem.prototype.createInstance = function () {
+    lem.prototype.register = function () {
         var _this = this;
         return function (request, response, next) {
             var url = request.path;
-            console.log("lem logged " + url + " for you sir");
             if (_this.routeConfig) {
-                // compare with the routeConfig
+                _this.checkRoute(url);
             }
             else {
+                console.log("lem logged " + url + " for you sir");
                 _this.rConPub.setex(url, 5, Date.now().toString());
             }
             if (next)
                 next();
         };
+    };
+    lem.prototype.checkRoute = function (url) {
+        if (this.routeConfig.include && this.routeConfig.include[url]) {
+            console.log("include " + url + " in lem");
+            this.rConPub.setex(url, 5, Date.now().toString());
+        }
+        else if (this.routeConfig.exclude && this.routeConfig.exclude.indexOf(url) >= 0) {
+            console.log("exclude " + url + " from lem");
+            return;
+        }
     };
     return lem;
 }());
