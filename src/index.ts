@@ -1,33 +1,36 @@
 import * as redis from 'redis';
-import { isUndefined } from 'util';
+import { isNullOrUndefined } from 'util';
+
+interface IRouteConfig {
+  include: { [s: string]: number },
+  exclude: [string],
+}
+
 export class lem {
   public rConPub: redis.RedisClient;
   public rConSub: redis.RedisClient;
-  public routeConfig: any;
+  public routeConfig: IRouteConfig;
+
   constructor(redisConnectConfig: string | redis.RedisClient,
-    config: any
+    config: IRouteConfig,
+    cb: (errorMessage: string) => any
   ) {
-    if (isUndefined(redisConnectConfig)) {
-      console.log('ckpt1');
+    if (isNullOrUndefined(redisConnectConfig)) {
       this.rConPub = redis.createClient();
       this.rConSub = redis.createClient();
     } else if (typeof redisConnectConfig == 'string') {
-      console.log('ckpt2');
       this.rConPub = redis.createClient(redisConnectConfig);
       this.rConSub = redis.createClient(redisConnectConfig);
     } else {
-      console.log('ckpt3');
+      // TODO: fix creation for pub/sub client
       this.rConPub = redisConnectConfig;
       this.rConSub = redisConnectConfig;
     }
 
-    // make sure the redis connection is actually alive
     this.rConPub.ping((err, reply) => {
       if (err !== null) {
         console.log('Redis initialization error', `${JSON.stringify(err)}`);
         process.exit(1);
-      } else {
-        console.log('Redis initialization success', `${reply}`);
       }
     });
 
@@ -35,8 +38,10 @@ export class lem {
       this.rConSub.config("SET", "notify-keyspace-events", "Ex");
       this.rConSub.SUBSCRIBE("__keyevent@0__:expired");
       this.rConSub.on("message", async (channel, message) => {
-        // TODO:
-        console.log(`${channel}, ${message}`);
+        if (!cb)
+          throw new Error(`route ${message} has no activity for 5 secs`);
+        else
+          cb(`route ${message} has no activity for 5 secs`);
       });
     });
 
@@ -46,16 +51,26 @@ export class lem {
     console.log('lem is at your service, sir');
   }
 
-  public createInstance(): any {
+  public register(): any {
     return (request: any, response: any, next: any) => {
       const url = request.path;
-      console.log(`lem logged ${url} for you sir`);
       if (this.routeConfig) {
-        // compare with the routeConfig
+        this.checkRoute(url);
       } else {
+        console.log(`lem logged ${url} for you sir`);
         this.rConPub.setex(url, 5, Date.now().toString());
       }
       if (next) next();
+    }
+  }
+
+  public checkRoute(url: string) {
+    if (this.routeConfig.include && this.routeConfig.include[url]) {
+      console.log(`include ${url} in lem`);
+      this.rConPub.setex(url, 5, Date.now().toString());
+    } else if (this.routeConfig.exclude && this.routeConfig.exclude.indexOf(url) >= 0) {
+      console.log(`exclude ${url} from lem`);
+      return;
     }
   }
 }
