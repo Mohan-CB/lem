@@ -2,7 +2,7 @@
   "name": "passive_route_monitor",
   "version": "1.0.0",
   "description": "lazy enpoint monitor",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "author": "Mohan Liu <Mohan.Liu@careerbuilder.com>",
   "license": "MIT",
   "dependencies": {
