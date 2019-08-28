@@ -7,16 +7,47 @@ const Router = require('koa-router');
 const router = new Router();
 
 const lemLib = require('../dist/index');
-lemInstance = new lemLib.lem();
 
+lemInstance = new lemLib.lem(null, {
+  include: {
+    '/add': 10,
+    '/minus': 10
+  },
+  exclude: [
+    '/multiply',
+    '/divide'
+  ]
+});
 
-router.get('/', async (ctx) => {
+app.use(lemInstance.createInstance());
+
+router.get('/add', async (ctx) => {
   ctx.body = {
     status: 'success',
     message: 'hello, world!'
   };
 })
-app.use(lemInstance.createInstance());
+
+router.get('/minus', async (ctx) => {
+  ctx.body = {
+    status: 'success',
+    message: 'hello, world!'
+  };
+})
+
+router.get('/multiply', async (ctx) => {
+  ctx.body = {
+    status: 'success',
+    message: 'hello, world!'
+  };
+})
+
+router.get('/divide', async (ctx) => {
+  ctx.body = {
+    status: 'success',
+    message: 'hello, world!'
+  };
+})
 
 app.use(router.routes());
 

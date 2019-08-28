@@ -1,25 +1,35 @@
 const express = require('express');
-const lemLib = require('../dist/index');
+const lem = require('../dist/index');
 const app = express();
 
-lemInstance = new lemLib.lem();
+lemInstance = new lem.lem(null, {
+  include: {
+    '/add': 10,
+    '/minus': 10
+  },
+  exclude: [
+    '/multiply',
+    '/divide'
+  ]
+},
+  console.log);
 
-app.use(lemInstance.createInstance());
+app.use(lemInstance.register());
 
-app.get('/', (req, res) => { // new
-  res.send('Homepage! Hello world.');
+app.get('/add', (req, res) => { // new
+  res.send('get add route');
 });
 
-app.post('/add', (req, res) => { // new
-  res.send('post add route');
+app.get('/minus', (req, res) => { // new
+  res.send('get minus route');
 });
 
-app.delete('/2', (req, res) => { // new
-  res.send('delete 2');
+app.get('/multiply', (req, res) => { // new
+  res.send('get multiply route');
 });
 
-app.put('/1', (req, res) => { // new
-  res.send('put 1');
+app.get('/divide', (req, res) => { // new
+  res.send('get divide route');
 });
 
 app.listen(3000, () => console.log('listening on port 3000'));
