@@ -1,5 +1,5 @@
 {
-  "name": "lem",
+  "name": "passive_route_monitor",
   "version": "1.0.0",
   "description": "lazy enpoint monitor",
   "main": "src/index.ts",
