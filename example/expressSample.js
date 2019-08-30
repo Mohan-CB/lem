@@ -1,18 +1,20 @@
 const express = require('express');
 const lem = require('../dist/index');
 const app = express();
+const EventEmitter = require('events');
 
-lemInstance = new lem.lem(null, {
-  include: {
-    '/add': 10,
-    '/minus': 10
-  },
-  exclude: [
-    '/multiply',
-    '/divide'
-  ]
-},
-  console.log);
+class MyEmitter extends EventEmitter {}
+
+const myEmitter = new MyEmitter();
+myEmitter.on('event', (message) => {
+  console.log(`an expire event occurred! details: ${message}`);
+  // customized code
+});
+
+const x = (message) => myEmitter.emit('event', message);
+
+
+lemInstance = new lem.lem(null, null, x);
 
 app.use(lemInstance.register());
 
