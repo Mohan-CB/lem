@@ -5,6 +5,9 @@
   "main": "dist/index.js",
   "author": "Mohan Liu <Mohan.Liu@careerbuilder.com>",
   "license": "MIT",
+  "scripts": {
+    "build": "tsc"
+  },
   "dependencies": {
     "@types/redis": "^2.8.13",
     "redis": "^2.8.0",
