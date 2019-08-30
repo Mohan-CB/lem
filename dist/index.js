@@ -79,7 +79,7 @@ var lem = /** @class */ (function () {
                 });
             }); });
         });
-        // TODO: construct the b+ tree fo routeConfig
+        // TODO: construct the trie tree for better route comparison
         this.routeConfig = config;
         console.log('lem is at your service, sir');
     }
