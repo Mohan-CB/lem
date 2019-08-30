@@ -8,26 +8,28 @@ By monitoring the last activity of some route on Service B, if the last activity
 # Examples 
 
 ## initialize
-`const lem = require('lem')`
+
 
 ```
+const lem = require('lem')
+
 lemInstance = new lem.lem();
-```
 
-```
+<!-- OR -->
+
 lemInstance = new lem.lem(
   null, 
   {
     include: {
-      '/add': 10,
-      '/minus': 10
+      '/route1': 10,
+      '/route2': 10
     },
     exclude: [
-      '/multiply',
-      '/divide'
+      '/route3',
+      '/route4'
     ]
   },
-  console.log);
+  console.err);
 ```
 
 ```
@@ -35,10 +37,10 @@ lemInstance = new lem.lem(
 app.use(lemInstance.register());
 ```
 
-## router registeration options
-by default, lemInstance monitor all routes for 6 hours by 
+## route registeration options
+by default, lemInstance monitor all routes for 6 hours
 
-well, you can also try to pass a dedicated route monitor configuration file to control it
+however, you can also try to pass a dedicated route monitor configuration file to control the behavior
 ```
 {
   include: [
@@ -60,3 +62,8 @@ well, you can also try to pass a dedicated route monitor configuration file to c
 }
 ```
 and monitor is setup to check the `/route1` for 1min, `/route2/subRoute1` for 1h
+
+# RoadMap
+- [ ] trie implementation for route config
+- [ ] test converage
+- [ ] ...
