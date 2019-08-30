@@ -39,7 +39,7 @@ app.use(lemInstance.register());
 by default, lemInstance monitor all routes for 6 hours by 
 
 well, you can also try to pass a dedicated route monitor configuration file to control it
-```json
+```
 {
   include: [
       {
