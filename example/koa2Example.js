@@ -19,7 +19,7 @@ lemInstance = new lemLib.lem(null, {
   ]
 });
 
-app.use(lemInstance.createInstance());
+app.use(lemInstance.register());
 
 router.get('/add', async (ctx) => {
   ctx.body = {
