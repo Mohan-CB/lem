@@ -3,7 +3,7 @@ Service A sends requests to Service B.
 
 In this case, I own B and I don't own A, how can I ensure the connection is alive?
 
-By monitoring the last activity of some route on Service B, if the last activity was 6 hours ago, then it attracts my attention.
+By monitoring the last activity of some route on Service B, if the last activity was 6 hours ago, then this would attract my attention.
 
 # Examples 
 
