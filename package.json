@@ -14,7 +14,7 @@
     "typescript": "^3.5.3"
   },
   "devDependencies": {
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "koa": "^2.8.1",
     "koa-router": "^7.4.0",
     "tslint": "^5.19.0"
